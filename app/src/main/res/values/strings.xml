@@ -1,0 +1,16 @@
+<resources>
+    <string name="app_name">火山小视频</string>
+    <string name="title_user_name" />
+    <string name="user_photo" />
+    <string name="fans_num">0</string>
+    <string name="attention_num">0</string>
+    <string name="hot_num">0</string>
+    <string name="fans_name">粉丝</string>
+    <string name="attention_name">关注</string>
+    <string name="hot_name">火力</string>
+    <string name="user_recommend" />
+    <string name="Null" />
+    <string name="live_time">25\n七月</string>
+    <string name="live_num">直播数量:1</string>
+    <string name="gift_rank">礼物榜</string>
+</resources>

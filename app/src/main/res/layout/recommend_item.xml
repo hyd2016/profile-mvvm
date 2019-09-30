@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="wrap_content"
+    android:padding="10dp"
+    android:layout_height="wrap_content">
+
+    <com.facebook.drawee.view.SimpleDraweeView
+        android:id="@+id/recommend_item_photo"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        app:roundAsCircle="true"
+        android:layout_gravity="center_horizontal"/>
+    <TextView
+        android:id="@+id/recommend_nick"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="#000000"
+        android:layout_gravity="center_horizontal"
+        android:text="一蓑烟雨任平生"/>
+
+    <TextView
+        android:id="@+id/recommend_reason"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="10dp"
+        android:layout_marginTop="10dp"
+        android:layout_gravity="center_horizontal"
+        android:text="可能感兴趣的人"/>
+
+    <Button
+        android:id="@+id/attention_item"
+        android:layout_width="wrap_content"
+        android:layout_height="25dp"
+        android:textColor="#ffff"
+        android:text="@string/attention_name"
+        android:layout_gravity="center_horizontal"
+        android:background="@drawable/btn_circle_red"/>
+
+</LinearLayout>

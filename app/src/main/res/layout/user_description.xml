@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="15dp"
+        android:orientation="horizontal">
+
+        <ImageView
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:adjustViewBounds="true"
+            android:src="@drawable/icon_myprofile_location"/>
+
+
+        <TextView
+            android:id="@+id/user_tx_location"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="5dp"
+            android:text="西安"
+            android:layout_marginStart="5dp" />
+        <TextView
+            android:id="@+id/tx_better_author"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="15dp"
+            android:text="火山优质作者"
+            android:visibility="gone"/>
+        <TextView
+            android:id="@+id/author_lv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="15dp"
+            android:text="lv.2"
+            android:visibility="gone"/>
+
+    </LinearLayout>
+
+
+    <TextView
+        android:id="@+id/user_tx_describe"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="15dp"
+        android:text="这个人很懒，什么都没有留下！"/>
+
+</LinearLayout>

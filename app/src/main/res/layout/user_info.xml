@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+
+    <com.facebook.drawee.view.SimpleDraweeView
+        android:id="@+id/img_user_photo"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:layout_marginStart="24dp"
+        android:layout_marginLeft="24dp"
+        android:layout_marginTop="8dp"
+        android:contentDescription="@string/user_photo"
+        app:layout_constraintBottom_toTopOf="@+id/guideline5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:roundAsCircle="true" />
+
+    <TextView
+        android:id="@+id/fans_num"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="32dp"
+        android:layout_marginLeft="32dp"
+        android:layout_marginTop="24dp"
+        android:text="@string/fans_num"
+        android:textColor="@android:color/black"
+        app:layout_constraintStart_toEndOf="@+id/img_user_photo"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/attention_num"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/attention_num"
+        android:textColor="@android:color/black"
+        app:layout_constraintBottom_toBottomOf="@+id/fans_num"
+        app:layout_constraintEnd_toStartOf="@+id/hot_num"
+        app:layout_constraintStart_toEndOf="@+id/fans_num"
+        app:layout_constraintTop_toTopOf="@+id/fans_num"
+        app:layout_constraintVertical_bias="0.0" />
+
+    <TextView
+        android:id="@+id/hot_num"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="40dp"
+        android:layout_marginRight="40dp"
+        android:text="@string/hot_num"
+        android:textColor="@android:color/black"
+        app:layout_constraintBottom_toBottomOf="@+id/fans_num"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/attention_num"
+        app:layout_constraintVertical_bias="0.0" />
+
+    <TextView
+        android:id="@+id/fans"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="@string/fans_name"
+        android:textSize="12sp"
+        app:layout_constraintEnd_toEndOf="@+id/fans_num"
+        app:layout_constraintStart_toStartOf="@+id/fans_num"
+        app:layout_constraintTop_toBottomOf="@+id/fans_num" />
+
+    <TextView
+        android:id="@+id/attention"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="@string/attention_name"
+        android:textSize="12sp"
+        app:layout_constraintEnd_toEndOf="@+id/attention_num"
+        app:layout_constraintStart_toStartOf="@+id/attention_num"
+        app:layout_constraintTop_toBottomOf="@+id/attention_num" />
+
+    <TextView
+        android:id="@+id/hot"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="@string/hot_name"
+        android:textSize="12sp"
+        app:layout_constraintEnd_toEndOf="@+id/hot_num"
+        app:layout_constraintStart_toStartOf="@+id/hot_num"
+        app:layout_constraintTop_toBottomOf="@+id/hot_num" />
+
+    <Button
+        android:id="@+id/btn_attention"
+        android:layout_width="0dp"
+        android:layout_height="30dp"
+        android:layout_marginStart="32dp"
+        android:layout_marginLeft="32dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginRight="16dp"
+        android:background="@drawable/btn_circle_red"
+        android:text="@string/attention_name"
+        android:textColor="@android:color/background_light"
+        app:layout_constraintBottom_toTopOf="@+id/guideline5"
+        app:layout_constraintEnd_toStartOf="@+id/btn_is_attention"
+        app:layout_constraintStart_toEndOf="@+id/img_user_photo"
+        app:layout_constraintTop_toBottomOf="@+id/attention"
+        app:layout_constraintVertical_bias="0.55" />
+
+    <TextView
+        android:id="@+id/user_recommend"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginRight="16dp"
+        android:background="@drawable/icon_rec_arrow_unfollow"
+        android:text="@string/user_recommend"
+        app:layout_constraintBottom_toBottomOf="@+id/btn_attention"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/btn_attention" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline5"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_begin="140dp" />
+
+    <Button
+        android:id="@+id/btn_is_attention"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        android:visibility="gone"
+        android:layout_marginEnd="16dp"
+        android:layout_marginRight="16dp"
+        android:background="@drawable/icon_profile_followed"
+        android:text="@string/Null"
+        app:layout_constraintBottom_toBottomOf="@+id/btn_attention"
+        app:layout_constraintEnd_toStartOf="@+id/user_recommend"
+        app:layout_constraintTop_toTopOf="@+id/btn_attention"
+        app:layout_constraintVertical_bias="0.3" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

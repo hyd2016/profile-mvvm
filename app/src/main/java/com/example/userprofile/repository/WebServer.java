@@ -7,6 +7,7 @@ import com.example.userprofile.model.UserPackage;
 import retrofit2.Call;
 import retrofit2.http.GET;
 import retrofit2.http.Query;
+import retrofit2.http.Url;
 
 /**
  * @descriptioon:
@@ -21,8 +22,8 @@ public interface WebServer {
     Call<UserPackage> getUserInfo(@Query("current_user_id") String userId);
 
     //请求用户作品信息
-    @GET("hotsoon/item/profile/published_list/?to_user_id=MS4wLjABAAAAf5wGmBGkNsAAurWjy36emnVqx5oBUmdwIwu0LMyjufF-xqcOSLdBUzpjTNesNqlI&min_time=0")
-    Call<PublishedPackage> getPublishList(@Query("max_time") String time);
+    @GET
+    Call<PublishedPackage> getPublishList(@Url String time);
 
     //请求推荐联系人信息
     @GET("hotsoon/user/relation/recommend/")

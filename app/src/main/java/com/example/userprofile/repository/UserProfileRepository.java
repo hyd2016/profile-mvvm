@@ -4,14 +4,8 @@ import android.util.Log;
 
 import androidx.lifecycle.MutableLiveData;
 
-import com.example.userprofile.model.Published;
-import com.example.userprofile.model.PublishedPackage;
-import com.example.userprofile.model.RecommendPackage;
-import com.example.userprofile.model.RecommendUser;
 import com.example.userprofile.model.User;
 import com.example.userprofile.model.UserPackage;
-
-import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -69,30 +63,5 @@ public class UserProfileRepository {
        });
         return userMutableLiveData;
    }
-
-
-
-    //网络获取用户作品信息
-    public MutableLiveData<List<Published>> getPublishes(){
-        final MutableLiveData<List<Published>> publishList = new MutableLiveData<>();
-
-        mWebServer.getPublishList("0").enqueue(new Callback<PublishedPackage>() {
-            @Override
-            public void onResponse(Call<PublishedPackage> call, Response<PublishedPackage> response) {
-                Log.d(TAG, "onResponse: "+ response.toString());
-                if (response.body() != null){
-                    publishList.setValue(response.body().getPublishedList());
-                    Log.d(TAG, "onResponse: "+ response.body().getPublishedList().get(0).getPublishDataData().getTitle());
-                }
-            }
-
-            @Override
-            public void onFailure(Call<PublishedPackage> call, Throwable t) {
-                Log.d(TAG, "onFailure: "+t.toString());
-            }
-        });
-
-        return publishList;
-    }
 
 }

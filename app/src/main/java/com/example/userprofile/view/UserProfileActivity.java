@@ -4,6 +4,7 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.animation.ObjectAnimator;
 import android.animation.ValueAnimator;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
@@ -18,7 +19,6 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.paging.PagedList;
 import androidx.recyclerview.widget.GridLayoutManager;
@@ -27,6 +27,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.userprofile.Interface.OnItemClickListener;
 import com.example.userprofile.R;
+import com.example.userprofile.Utils.AppConstants;
 import com.example.userprofile.adapter.PublishAdapter;
 import com.example.userprofile.adapter.RecommendAdapter;
 import com.example.userprofile.model.Published;
@@ -121,6 +122,7 @@ public class UserProfileActivity extends AppCompatActivity {
     private void initPublished() {
         //设置3列布局
         PublishViewModel publishViewModel = ViewModelProviders.of(this).get(PublishViewModel.class);
+        publishViewModel.init(this);
         GridLayoutManager gridLayoutManager = new GridLayoutManager(this, 3);
         recyclerViewPublishes.setLayoutManager(gridLayoutManager);
         PublishAdapter adapter = new PublishAdapter();
@@ -135,6 +137,7 @@ public class UserProfileActivity extends AppCompatActivity {
             @Override
             public void onItemClick(View view, int position) {
                 Toast.makeText(UserProfileActivity.this,"touch"+position,Toast.LENGTH_LONG).show();
+                publishViewModel.startService(position);
             }
         });
     }
@@ -161,6 +164,10 @@ public class UserProfileActivity extends AppCompatActivity {
                     Log.d(TAG, "onChanged: null");
                 }
 //                Log.d(TAG, "onChanged: " + user.getNickName());
+
+                if (user == null){
+                    return;
+                }
                 textUserName.setText(user.getNickName());
                 fansNum.setText(String.valueOf(user.getTotalFansCount()));
                 attentionNum.setText(String.valueOf(user.getStats().getFollowingCount()));
@@ -258,5 +265,26 @@ public class UserProfileActivity extends AppCompatActivity {
             initRecommend();
             ISRECOMMEND = true;
         }
+    }
+
+    @OnClick(R.id.btn_attention)
+    public void changeFollow(){
+        mUserProfileViewModel.getFollowStatus().setValue(AppConstants.FOLLOW_STATUS_UNFOLLOW);
+        mUserProfileViewModel.getFollowStatus().observe(this, new Observer<Integer>() {
+            @Override
+            public void onChanged(Integer integer) {
+                btnAttentiion.setText(R.string.sendPrivateMessage);
+                btnAttentiion.setBackground(getDrawable(R.drawable.btn_circle_white));
+                userRecommend.setBackground(getDrawable(R.drawable.icon_rec_arrow_followed));
+                animateOpen();
+                ATTENTION = true;
+            }
+        });
+    }
+
+    @OnClick(R.id.img_user_photo)
+    public void showMusicHistory(){
+        Intent intent = new Intent(UserProfileActivity.this,MusicHistoryActivity.class);
+        startActivity(intent);
     }
 }

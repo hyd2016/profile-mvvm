@@ -1,4 +1,4 @@
-package com.example.hotsoon_user_profiiles.music;
+package com.example.userprofile.model;
 
 import android.os.Parcel;
 import android.os.Parcelable;
@@ -11,14 +11,14 @@ public class MusicParcelable implements Parcelable {
     //数据库数据id
     private int id = -1;
 
-    public MusicParcelable(String musicUrl, String musicTitle, String musicCoverurl,int position) {
+    public MusicParcelable(String musicUrl, String musicTitle, String musicCoverurl, int position) {
         this.musicUrl = musicUrl;
         this.musicTitle = musicTitle;
         this.musicCoverurl = musicCoverurl;
         this.position = position;
     }
 
-    public MusicParcelable(String musicUrl, String musicTitle, String musicCoverurl,int position,int id) {
+    public MusicParcelable(String musicUrl, String musicTitle, String musicCoverurl, int position, int id) {
         this.musicUrl = musicUrl;
         this.musicTitle = musicTitle;
         this.musicCoverurl = musicCoverurl;

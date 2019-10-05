@@ -15,13 +15,16 @@ import java.util.List;
  * @date: 2019-09-27 10:07
  */
 public class UserProfileViewModel extends ViewModel {
+
     private MutableLiveData<List<Published>> currentPublishs;
     private MutableLiveData<User> currentUser;
+
+    private MutableLiveData<Integer> followStatus;
 
     //获取初始化数据
     public void init(){
         currentUser = UserProfileRepository.getInstance().getUser();
-        currentPublishs = UserProfileRepository.getInstance().getPublishes();
+        followStatus = new MutableLiveData<>();
     }
 
     public MutableLiveData<List<Published>> getCurrentPublishs() {
@@ -32,4 +35,7 @@ public class UserProfileViewModel extends ViewModel {
         return currentUser;
     }
 
+    public MutableLiveData<Integer> getFollowStatus() {
+        return followStatus;
+    }
 }

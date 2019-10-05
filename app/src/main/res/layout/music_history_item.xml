@@ -16,12 +16,13 @@
             android:id="@+id/music_history_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="美食原创音乐"/>
+            android:textColor="@color/colorPrimaryDark"
+            android:text=""/>
         <TextView
             android:id="@+id/music_history_url"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="http://dfdsafdgfagfgfagasggsdgsagdgsadgsdgdgd"/>
+            android:text=""/>
     </LinearLayout>
 
 

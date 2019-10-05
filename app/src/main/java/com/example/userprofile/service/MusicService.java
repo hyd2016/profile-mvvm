@@ -1,4 +1,4 @@
-package com.example.userprofile.music.service;
+package com.example.userprofile.service;
 
 import android.app.Notification;
 import android.app.NotificationChannel;

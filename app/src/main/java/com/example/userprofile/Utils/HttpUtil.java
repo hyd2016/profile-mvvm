@@ -1,4 +1,4 @@
-package com.example.hotsoon_user_profiiles.Util;
+package com.example.userprofile.Utils;
 
 import okhttp3.Callback;
 import okhttp3.OkHttpClient;

@@ -1,3 +1,5 @@
+package com.example.userprofile;
+
 import android.app.Application;
 import android.content.Context;
 

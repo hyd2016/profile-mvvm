@@ -1,7 +1,6 @@
 package com.example.userprofile.adapter;
 
 import android.annotation.SuppressLint;
-import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,11 +22,8 @@ import com.facebook.drawee.view.SimpleDraweeView;
  */
 public class RecommendAdapter extends PagedListAdapter<RecommendUser,RecommendAdapter.RecommendViewHolder> {
 
-    Context mContext;
-
-    public RecommendAdapter(Context context){
+    public RecommendAdapter(){
         super(DIFF_CALLBACK);
-        mContext = context;
     }
 
     @NonNull

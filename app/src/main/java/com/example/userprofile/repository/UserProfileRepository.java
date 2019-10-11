@@ -4,14 +4,15 @@ import android.util.Log;
 
 import androidx.lifecycle.MutableLiveData;
 
+import com.example.userprofile.di.DaggerUserProfileComponent;
 import com.example.userprofile.model.User;
 import com.example.userprofile.model.UserPackage;
+
+import javax.inject.Inject;
 
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
-import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
 
 /**
  * @descriptioon:
@@ -20,16 +21,22 @@ import retrofit2.converter.gson.GsonConverterFactory;
  */
 public class UserProfileRepository {
     private static final String TAG = "UserProfileRepository";
-    private WebServer mWebServer;
+  //  private WebServer mWebServer;
     private static UserProfileRepository sUserProfileRepository;
 
+    @Inject
+    WebServer mWebServer;
+
     public UserProfileRepository() {
-        Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl("https://api.huoshan.com/")
-                .addConverterFactory(GsonConverterFactory.create())
-                .build();
-        mWebServer = retrofit.create(WebServer.class);
+        DaggerUserProfileComponent.create().inject(UserProfileRepository.this);
     }
+    //    public UserProfileRepository() {
+//        Retrofit retrofit = new Retrofit.Builder()
+//                .baseUrl("https://api.huoshan.com/")
+//                .addConverterFactory(GsonConverterFactory.create())
+//                .build();
+//        mWebServer = retrofit.create(WebServer.class);
+//    }
 
     //单例
     public synchronized static UserProfileRepository getInstance() {

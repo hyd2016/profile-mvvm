@@ -6,9 +6,13 @@
 
     <include layout="@layout/music_history_title"/>
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/music_history_list"
+<!--    <androidx.recyclerview.widget.RecyclerView-->
+<!--        android:id="@+id/music_history_list"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="match_parent"/>-->
+
+    <FrameLayout
+        android:id="@+id/music_activity_fragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>
-
 </LinearLayout>

@@ -1,24 +1,22 @@
 package com.example.userprofile.viewmodel;
 
 import android.content.Context;
-import android.content.Intent;
-import android.os.Messenger;
 import android.util.Log;
 
+import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.LiveData;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModel;
 import androidx.paging.LivePagedListBuilder;
 import androidx.paging.PagedList;
 
-import com.example.userprofile.Interface.HandlePosition;
+import com.example.userprofile.Utils.IPCByMessenger;
+import com.example.userprofile.di.DaggerUserProfileComponent;
 import com.example.userprofile.model.MusicParcelable;
 import com.example.userprofile.model.Published;
-import com.example.userprofile.service.MusicService;
-import com.example.userprofile.service.MusicServiceConnection;
-import com.example.userprofile.service.PositionHandler;
 import com.example.userprofile.repository.published.PublishFactory;
 
-import static android.content.Context.BIND_AUTO_CREATE;
+import javax.inject.Inject;
 
 /**
  * @descriptioon:
@@ -29,15 +27,19 @@ public class PublishViewModel extends ViewModel {
     private static final String TAG = "PublishViewModel";
     private Context mContext;
 
-    private PositionHandler positionHandler = new PositionHandler();
+    //private PositionHandler positionHandler = new PositionHandler();
 
-    private Messenger mClient = new Messenger(positionHandler);
+    //private Messenger mClient = new Messenger(positionHandler);
 
     private LiveData<PagedList<Published>> mPushlished;
 
-    private MusicServiceConnection mMusicServiceConnection;
+    //private MusicServiceConnection mMusicServiceConnection;
 
-    private MusicParcelable mMusicParcelable;
+    //private MusicParcelable mMusicParcelable;
+
+
+    @Inject
+    IPCByMessenger mIPCByMessenger;
 
     public PublishViewModel() {
 
@@ -49,13 +51,52 @@ public class PublishViewModel extends ViewModel {
                 .setEnablePlaceholders(false)
                 .build();
 
-        mPushlished = new LivePagedListBuilder<String,Published>(publishFactory,config).build();
+        mPushlished = new LivePagedListBuilder<>(publishFactory,config).build();
 
-        positionHandler.setmHandlePosition(new HandlePosition() {
+        DaggerUserProfileComponent.create().inject(PublishViewModel.this);
+
+
+
+//        positionHandler.setmHandlePosition(new HandlePosition() {
+//            @Override
+//            public void sendMusicParcelable(Messenger service,int position) {
+//                Log.d(TAG, "sendMusicParcelable: "+ position);
+//
+//                if (mPushlished.getValue() != null){
+//                    //上一曲到0
+//                    if(position < 0){
+//                        position = mPushlished.getValue().size()-1;
+//                    }
+//                    if (position>=mPushlished.getValue().size()){
+//                        position = 0;
+//                    }
+//
+//                }
+//
+//                Intent intent = new Intent(mContext, MusicService.class);
+//
+//                mMusicParcelable = generateMusicParcelable(position);
+//
+//                mMusicServiceConnection = new MusicServiceConnection(mMusicParcelable,mClient);
+//
+//                Log.d(TAG, "sendMusicParcelable: ");
+//
+//                mContext.bindService(intent,mMusicServiceConnection,BIND_AUTO_CREATE);
+//
+//            }
+//        });
+        Log.d(TAG, "PublishViewModel: "+mIPCByMessenger.toString());
+
+
+    }
+
+    public void init(Context context){
+        mContext = context;
+
+        //对service发来位置数据进行监听
+        mIPCByMessenger.getPositionHandler().getPosition().observe((LifecycleOwner) mContext, new Observer<Integer>() {
             @Override
-            public void sendMusicParcelable(Messenger service,int position) {
-                Log.d(TAG, "sendMusicParcelable: "+ position);
-
+            public void onChanged(Integer position) {
                 if (mPushlished.getValue() != null){
                     //上一曲到0
                     if(position < 0){
@@ -67,23 +108,9 @@ public class PublishViewModel extends ViewModel {
 
                 }
 
-                Intent intent = new Intent(mContext, MusicService.class);
-
-                mMusicParcelable = generateMusicParcelable(position);
-
-                mMusicServiceConnection = new MusicServiceConnection(mMusicParcelable,mClient);
-
-                Log.d(TAG, "sendMusicParcelable: ");
-
-                mContext.bindService(intent,mMusicServiceConnection,BIND_AUTO_CREATE);
-
+                startService(position);
             }
         });
-
-    }
-
-    public void init(Context context){
-        mContext = context;
     }
 
     //生成MusicParcelable对象
@@ -111,13 +138,20 @@ public class PublishViewModel extends ViewModel {
     //启动服务
     public void startService(int position){
 
-        Intent intent = new Intent(mContext, MusicService.class);
+        mIPCByMessenger.sendToService(mContext,generateMusicParcelable(position));
 
-        mMusicParcelable = generateMusicParcelable(position);
-
-        mMusicServiceConnection = new MusicServiceConnection(mMusicParcelable,mClient);
+//        Intent intent = new Intent(mContext, MusicService.class);
+//
+//        mMusicParcelable = generateMusicParcelable(position);
+//
+//        mMusicServiceConnection = new MusicServiceConnection(mMusicParcelable,mClient);
 
         Log.d(TAG, "startService: " );
-        mContext.bindService(intent,mMusicServiceConnection,BIND_AUTO_CREATE);
+//        mContext.bindService(intent,mMusicServiceConnection,BIND_AUTO_CREATE);
+    }
+
+    //解绑服务服务，防止内存泄漏
+    public void unBindMusicService(){
+        mIPCByMessenger.unBindService();
     }
 }

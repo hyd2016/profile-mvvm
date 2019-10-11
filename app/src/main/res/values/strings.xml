@@ -19,4 +19,5 @@
     <string name="no">取消</string>
     <string name="music_history">历史播放记录</string>
     <string name="searchMusic">查询历史记录</string>
+    <string name="dialogIfUnattention">确定不关注此人？</string>
 </resources>

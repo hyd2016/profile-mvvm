@@ -26,7 +26,7 @@ public class RecommendViewModel extends ViewModel {
                 .setEnablePlaceholders(false)
                 .setPageSize(10)
                 .build();
-        recommendList = new LivePagedListBuilder<String,RecommendUser>(recommendFactory,config).build();
+        recommendList = new LivePagedListBuilder<>(recommendFactory,config).build();
 
     }
     public LiveData<PagedList<RecommendUser>> getRecommendList() {

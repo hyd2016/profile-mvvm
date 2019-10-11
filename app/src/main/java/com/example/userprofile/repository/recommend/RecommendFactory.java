@@ -1,9 +1,7 @@
 package com.example.userprofile.repository.recommend;
 
 import androidx.annotation.NonNull;
-import androidx.lifecycle.MutableLiveData;
 import androidx.paging.DataSource;
-import androidx.paging.PageKeyedDataSource;
 
 import com.example.userprofile.model.RecommendUser;
 
@@ -12,15 +10,11 @@ import com.example.userprofile.model.RecommendUser;
  * @author: dinghaoyu
  * @date: 2019-09-29 20:52
  */
-public class RecommendFactory extends DataSource.Factory {
-
-    private MutableLiveData<PageKeyedDataSource<String, RecommendUser>> mPageKeyedDataSourceMutableLiveData = new MutableLiveData<>();
+public class RecommendFactory extends DataSource.Factory<String,RecommendUser> {
 
     @NonNull
     @Override
     public DataSource create() {
-        RecommenDataSource recommenDataSource = new RecommenDataSource();
-        mPageKeyedDataSourceMutableLiveData.postValue(recommenDataSource);
-        return recommenDataSource;
+        return new RecommenDataSource();
     }
 }

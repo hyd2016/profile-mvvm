@@ -6,6 +6,7 @@ import android.animation.ObjectAnimator;
 import android.animation.ValueAnimator;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -16,11 +17,11 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.RequiresApi;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
-import androidx.paging.PagedList;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -30,14 +31,14 @@ import com.example.userprofile.R;
 import com.example.userprofile.Utils.AppConstants;
 import com.example.userprofile.adapter.PublishAdapter;
 import com.example.userprofile.adapter.RecommendAdapter;
-import com.example.userprofile.model.Published;
-import com.example.userprofile.model.RecommendUser;
-import com.example.userprofile.model.User;
+import com.example.userprofile.di.DaggerUserProfileComponent;
 import com.example.userprofile.viewmodel.PublishViewModel;
 import com.example.userprofile.viewmodel.RecommendViewModel;
 import com.example.userprofile.viewmodel.UserProfileViewModel;
 import com.facebook.drawee.backends.pipeline.Fresco;
 import com.facebook.drawee.view.SimpleDraweeView;
+
+import javax.inject.Inject;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -46,11 +47,16 @@ import butterknife.OnClick;
 public class UserProfileActivity extends AppCompatActivity {
     private static final String TAG = "UserProfileActivity";
     private static boolean ISRECOMMEND = false;
-    //关注状态
-    private static boolean ATTENTION = false;
-
 
     private UserProfileViewModel mUserProfileViewModel;
+
+    private PublishViewModel mPublishViewModel;
+
+    @Inject
+    PublishAdapter mPublishAdapter;
+
+    @Inject
+    RecommendAdapter mRecommendAdapter;
 
     @BindView(R.id.btn_title_back)
     Button btnTitleBack;
@@ -113,32 +119,41 @@ public class UserProfileActivity extends AppCompatActivity {
         Fresco.initialize(this);
         setContentView(R.layout.activity_user_profile);
         ButterKnife.bind(this);
-        mUserProfileViewModel = new UserProfileViewModel();
+        DaggerUserProfileComponent.create().inject(this);
+        mUserProfileViewModel = ViewModelProviders.of(this).get(UserProfileViewModel.class);
+        mPublishViewModel = ViewModelProviders.of(this).get(PublishViewModel.class);
         mUserProfileViewModel.init();
         dataChange();
         initPublished();
     }
 
+    @Override
+    protected void onDestroy() {
+        mPublishViewModel.unBindMusicService();
+        super.onDestroy();
+    }
+
     private void initPublished() {
         //设置3列布局
-        PublishViewModel publishViewModel = ViewModelProviders.of(this).get(PublishViewModel.class);
-        publishViewModel.init(this);
+
+        mPublishViewModel.init(this);
         GridLayoutManager gridLayoutManager = new GridLayoutManager(this, 3);
         recyclerViewPublishes.setLayoutManager(gridLayoutManager);
-        PublishAdapter adapter = new PublishAdapter();
-        publishViewModel.getPushlished().observe(this, new Observer<PagedList<Published>>() {
-            @Override
-            public void onChanged(PagedList<Published> publisheds) {
-                adapter.submitList(publisheds);
-            }
-        });
-        recyclerViewPublishes.setAdapter(adapter);
-        adapter.setOnItemClickListener(new OnItemClickListener() {
+        mPublishViewModel.getPushlished().observe(this, publisheds -> mPublishAdapter.submitList(publisheds));
+        recyclerViewPublishes.setAdapter(mPublishAdapter);
+        mPublishAdapter.setOnItemClickListener(new OnItemClickListener() {
             @Override
             public void onItemClick(View view, int position) {
                 Toast.makeText(UserProfileActivity.this,"touch"+position,Toast.LENGTH_LONG).show();
-                publishViewModel.startService(position);
+                mPublishViewModel.startService(position);
             }
+
+            @Override
+            public void onItemLongClick(int position) {
+
+            }
+
+
         });
     }
 
@@ -146,36 +161,27 @@ public class UserProfileActivity extends AppCompatActivity {
         RecommendViewModel recommendViewModel = ViewModelProviders.of(this).get(RecommendViewModel.class);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(UserProfileActivity.this,LinearLayoutManager.HORIZONTAL,false);
         recyclerViewRecommend.setLayoutManager(linearLayoutManager);
-        RecommendAdapter recommendUserAdapt = new RecommendAdapter(this);
-        recommendViewModel.getRecommendList().observe(this, new Observer<PagedList<RecommendUser>>() {
-            @Override
-            public void onChanged(PagedList<RecommendUser> recommendUsers) {
-                recommendUserAdapt.submitList(recommendUsers);
-            }
-        });
-        recyclerViewRecommend.setAdapter(recommendUserAdapt);
+        recommendViewModel.getRecommendList().observe(this, recommendUsers -> mRecommendAdapter.submitList(recommendUsers));
+        recyclerViewRecommend.setAdapter(mRecommendAdapter);
     }
 
     private void dataChange() {
-        mUserProfileViewModel.getCurrentUser().observe(this, new Observer<User>() {
-            @Override
-            public void onChanged(User user) {
-                if (user == null){
-                    Log.d(TAG, "onChanged: null");
-                }
-//                Log.d(TAG, "onChanged: " + user.getNickName());
+        mUserProfileViewModel.getCurrentUser().observe(this, user -> {
 
-                if (user == null){
-                    return;
-                }
-                textUserName.setText(user.getNickName());
-                fansNum.setText(String.valueOf(user.getTotalFansCount()));
-                attentionNum.setText(String.valueOf(user.getStats().getFollowingCount()));
-                hotNum.setText(String.valueOf(user.getFanTicketCount()));
-                imgUserPhoto.setImageURI(Uri.parse(user.getAvatarMedium().getUrls().get(0)));
-                userLocation.setText(user.getCity());
-                userDescription.setText(user.getSignature());
+            if (user == null){
+                Log.d(TAG, "onChanged: null");
             }
+
+            if (user == null){
+                return;
+            }
+            textUserName.setText(user.getNickName());
+            fansNum.setText(String.valueOf(user.getTotalFansCount()));
+            attentionNum.setText(String.valueOf(user.getStats().getFollowingCount()));
+            hotNum.setText(String.valueOf(user.getFanTicketCount()));
+            imgUserPhoto.setImageURI(Uri.parse(user.getAvatarMedium().getUrls().get(0)));
+            userLocation.setText(user.getCity());
+            userDescription.setText(user.getSignature());
         });
     }
 
@@ -184,15 +190,12 @@ public class UserProfileActivity extends AppCompatActivity {
         final int targetHeight = (int) (getResources().getDisplayMetrics().density * 190 + 0.5);
         layoutRecommend.getLayoutParams().height = targetHeight;
         layoutRecommend.setVisibility(View.VISIBLE);
-        animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-            @Override
-            public void onAnimationUpdate(ValueAnimator valueAnimator) {
-                float value = (float) valueAnimator.getAnimatedValue();
-                LinearLayout.LayoutParams layoutParams = (LinearLayout.LayoutParams) layoutRecommend.getLayoutParams();
-                layoutParams.height = targetHeight;
-                layoutParams.bottomMargin = -targetHeight + (int) (value * targetHeight);
-                layoutRecommend.setLayoutParams(layoutParams);
-            }
+        animator.addUpdateListener(valueAnimator -> {
+            float value = (float) valueAnimator.getAnimatedValue();
+            LinearLayout.LayoutParams layoutParams = (LinearLayout.LayoutParams) layoutRecommend.getLayoutParams();
+            layoutParams.height = targetHeight;
+            layoutParams.bottomMargin = -targetHeight + (int) (value * targetHeight);
+            layoutRecommend.setLayoutParams(layoutParams);
         });
         animator.setDuration(200);
         animator.addListener(new AnimatorListenerAdapter() {
@@ -211,15 +214,12 @@ public class UserProfileActivity extends AppCompatActivity {
         final int targetHeight = (int) (getResources().getDisplayMetrics().density * 190 + 0.5);
         layoutRecommend.getLayoutParams().height = targetHeight;
         layoutRecommend.setVisibility(View.VISIBLE);
-        animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-            @Override
-            public void onAnimationUpdate(ValueAnimator valueAnimator) {
-                float value = (float) valueAnimator.getAnimatedValue();
-                LinearLayout.LayoutParams layoutParams = (LinearLayout.LayoutParams) layoutRecommend.getLayoutParams();
-                layoutParams.height = targetHeight;
-                layoutParams.bottomMargin =  - (int) (value * targetHeight);
-                layoutRecommend.setLayoutParams(layoutParams);
-            }
+        animator.addUpdateListener(valueAnimator -> {
+            float value = (float) valueAnimator.getAnimatedValue();
+            LinearLayout.LayoutParams layoutParams = (LinearLayout.LayoutParams) layoutRecommend.getLayoutParams();
+            layoutParams.height = targetHeight;
+            layoutParams.bottomMargin =  - (int) (value * targetHeight);
+            layoutRecommend.setLayoutParams(layoutParams);
         });
         animator.setDuration(200);
         animator.addListener(new AnimatorListenerAdapter() {
@@ -234,33 +234,42 @@ public class UserProfileActivity extends AppCompatActivity {
 
     }
 
+    public void triangleAnimator(int start,int end){
+        ObjectAnimator animator = ObjectAnimator.ofFloat(findViewById(R.id.user_recommend),"rotation",start,end);
+        animator.setDuration(200);
+        animator.start();
+    }
+
+    //取消关注确认弹窗
+    @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
+    private void showDialog() {
+        final AlertDialog.Builder normalDialog =
+                new AlertDialog.Builder(UserProfileActivity.this);
+        normalDialog.setMessage(getString(R.string.dialogIfUnattention));
+        normalDialog.setPositiveButton(getString(R.string.yes),
+                (dialog, which) -> {
+                    btnAttentiion.setText(R.string.attention_name);
+                    btnAttentiion.setBackground(getDrawable(R.drawable.btn_circle_red));
+                    userRecommend.setBackground(getDrawable(R.drawable.icon_rec_arrow_unfollow));
+                    btnIsAttention.setVisibility(View.GONE);
+                });
+        normalDialog.setNegativeButton(getString(R.string.no),
+                (dialog, which) -> {});
+        // 显示
+        normalDialog.show();
+    }
+
+
     @OnClick(R.id.user_recommend)
     public void showRecommend(){
 
         if(ISRECOMMEND){
-            if(ATTENTION){
-                ObjectAnimator animator = ObjectAnimator.ofFloat(findViewById(R.id.user_recommend),"rotation",0,180);
-                animator.setDuration(200);
-                animator.start();
-            }else {
-                ObjectAnimator animator = ObjectAnimator.ofFloat(findViewById(R.id.user_recommend),"rotation",180,0);
-                animator.setDuration(200);
-                animator.start();
-            }
+            triangleAnimator(180,0);
             animateClose();
             ISRECOMMEND = false;
 
         }else {
-            if(ATTENTION){
-                ObjectAnimator animator = ObjectAnimator.ofFloat(findViewById(R.id.user_recommend),"rotation",180,0);
-                animator.setDuration(200);
-                animator.start();
-            }else {
-                ObjectAnimator animator = ObjectAnimator.ofFloat(findViewById(R.id.user_recommend),"rotation",0,180);
-                animator.setDuration(200);
-                animator.start();
-            }
-
+            triangleAnimator(0,180);
             animateOpen();
             initRecommend();
             ISRECOMMEND = true;
@@ -270,15 +279,14 @@ public class UserProfileActivity extends AppCompatActivity {
     @OnClick(R.id.btn_attention)
     public void changeFollow(){
         mUserProfileViewModel.getFollowStatus().setValue(AppConstants.FOLLOW_STATUS_UNFOLLOW);
-        mUserProfileViewModel.getFollowStatus().observe(this, new Observer<Integer>() {
-            @Override
-            public void onChanged(Integer integer) {
-                btnAttentiion.setText(R.string.sendPrivateMessage);
-                btnAttentiion.setBackground(getDrawable(R.drawable.btn_circle_white));
-                userRecommend.setBackground(getDrawable(R.drawable.icon_rec_arrow_followed));
-                animateOpen();
-                ATTENTION = true;
-            }
+        mUserProfileViewModel.getFollowStatus().observe(this, integer -> {
+            btnAttentiion.setText(R.string.sendPrivateMessage);
+            btnAttentiion.setBackground(getDrawable(R.drawable.btn_circle_white));
+            userRecommend.setBackground(getDrawable(R.drawable.icon_rec_arrow_followed));
+            triangleAnimator(0,180);
+            btnIsAttention.setVisibility(View.VISIBLE);
+            animateOpen();
+            ISRECOMMEND = true;
         });
     }
 
@@ -287,4 +295,11 @@ public class UserProfileActivity extends AppCompatActivity {
         Intent intent = new Intent(UserProfileActivity.this,MusicHistoryActivity.class);
         startActivity(intent);
     }
+
+
+    @OnClick(R.id.btn_is_attention)
+    public void unFollow(){
+        showDialog();
+    }
+
 }

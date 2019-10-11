@@ -5,15 +5,16 @@ import android.util.Log;
 import androidx.annotation.NonNull;
 import androidx.paging.PageKeyedDataSource;
 
+import com.example.userprofile.di.DaggerUserProfileComponent;
 import com.example.userprofile.model.Published;
 import com.example.userprofile.model.PublishedPackage;
 import com.example.userprofile.repository.WebServer;
 
+import javax.inject.Inject;
+
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
-import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
 
 /**
  * @descriptioon:
@@ -22,14 +23,17 @@ import retrofit2.converter.gson.GsonConverterFactory;
  */
 public class PublishDataSource extends PageKeyedDataSource<String, Published> {
     private static final String TAG = "PublishDataSource";
-    private WebServer mWebServer;
+ //   private WebServer mWebServer;
+    @Inject
+    WebServer mWebServer;
 
     public PublishDataSource() {
-        Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl("https://api.huoshan.com/")
-                .addConverterFactory(GsonConverterFactory.create())
-                .build();
-        mWebServer = retrofit.create(WebServer.class);
+//        Retrofit retrofit = new Retrofit.Builder()
+//                .baseUrl("https://api.huoshan.com/")
+//                .addConverterFactory(GsonConverterFactory.create())
+//                .build();
+//        mWebServer = retrofit.create(WebServer.class);
+        DaggerUserProfileComponent.create().inject(this);
     }
 
     @Override

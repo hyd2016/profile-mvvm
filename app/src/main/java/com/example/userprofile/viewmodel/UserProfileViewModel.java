@@ -3,11 +3,8 @@ package com.example.userprofile.viewmodel;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
-import com.example.userprofile.model.Published;
 import com.example.userprofile.model.User;
 import com.example.userprofile.repository.UserProfileRepository;
-
-import java.util.List;
 
 /**
  * @descriptioon:
@@ -16,7 +13,6 @@ import java.util.List;
  */
 public class UserProfileViewModel extends ViewModel {
 
-    private MutableLiveData<List<Published>> currentPublishs;
     private MutableLiveData<User> currentUser;
 
     private MutableLiveData<Integer> followStatus;
@@ -25,10 +21,6 @@ public class UserProfileViewModel extends ViewModel {
     public void init(){
         currentUser = UserProfileRepository.getInstance().getUser();
         followStatus = new MutableLiveData<>();
-    }
-
-    public MutableLiveData<List<Published>> getCurrentPublishs() {
-        return currentPublishs;
     }
 
     public MutableLiveData<User> getCurrentUser() {

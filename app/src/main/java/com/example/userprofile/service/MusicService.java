@@ -37,6 +37,7 @@ import com.example.userprofile.model.MusicParcelable;
 import com.example.userprofile.view.UserProfileActivity;
 
 import java.io.IOException;
+import java.util.Objects;
 
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -226,7 +227,6 @@ public class MusicService extends Service {
 
     @Override
     public IBinder onBind(Intent arg0) {
-        // TODO Auto-generated method stub
         return mMessenger.getBinder();
     }
 
@@ -263,8 +263,8 @@ public class MusicService extends Service {
         mediaPlayer.setWakeMode(this, PowerManager.PARTIAL_WAKE_LOCK);
 
         // 如果你使用wifi播放流媒体，你还需要持有wifi锁
-        wifiLock = ((WifiManager) getApplicationContext()
-                .getSystemService(Context.WIFI_SERVICE))
+        wifiLock = ((WifiManager) Objects.requireNonNull(getApplicationContext()
+                .getSystemService(Context.WIFI_SERVICE)))
                 .createWifiLock(WifiManager.WIFI_MODE_FULL, "wifilock");
         wifiLock.acquire();
 
@@ -297,6 +297,7 @@ public class MusicService extends Service {
     // 播放
     private void play() {
         Log.d(TAG, "play: "+musics);
+
         try {
             if (mediaPlayer == null)
                 initMediaPlayer();
@@ -346,6 +347,7 @@ public class MusicService extends Service {
 
             Log.d(TAG, "updateNotification: "+mMusicParcelable.getMusicCoverurl());
             if (!isPause) {
+                //更新播放按钮
 
             } else {
 
@@ -392,7 +394,7 @@ public class MusicService extends Service {
                 Log.d(TAG,"on img load response");
                 Message message=imgHandler.obtainMessage();//声明一个传递信息的Message
                 if (response.isSuccessful()){//成功
-                    message.what=11;  //设置成功的指令为1
+                    message.what=11;  //设置成功的指令为11
                     message.obj=response.body().bytes();//带入图片的数据
                     imgHandler.sendMessage(message);//将指令和数据传出去
                 }else{//失败
